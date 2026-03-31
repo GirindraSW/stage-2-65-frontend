@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Space+Grotesk:wght@400;600&display=swap");
+
+:root {
+  --bg: #f7f1eb;
+  --text: #2f2a24;
+  --muted: #6b5f55;
+  --card: #ffffff;
+  --border: #eadfd4;
+  --accent: #ff6f3c;
+  --chip: rgba(255, 111, 60, 0.1);
+  --shadow: 0 18px 45px -30px rgba(63, 45, 33, 0.6);
+  --shadow-soft: 0 12px 30px -22px rgba(63, 45, 33, 0.5);
+
+  font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.55;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  margin: 0;
+  color: var(--text);
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+}
