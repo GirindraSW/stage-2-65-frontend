@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from "react"; //use memo optimasi dengen menyimpan perhitungan di antara rendering
 import ProductCard from "./components/ProductCard";
 import "./App.css";
 
@@ -53,17 +53,28 @@ function App() {
       )
     );
   };
+  {/* 
+    Fungsi toggleCart untuk menambah atau menghapus produk dari keranjang. 
+    Parameter id adalah id produk yang diklik.
+    Dalam setProducts, menggunakan prev state products lalu memetakan tiap produk.
+    Jika id cocok dengan produk, buat copy produk tersebut tapi invert nilai inCart.
+    Produk lain tetap sama. 
+  */}
 
   const cartCount = useMemo(
     () => products.filter((product) => product.inCart).length,
     [products]
   );
+  {/* 
+    Menghitung jumlah produk yang ada di keranjang menggunakan useMemo agar hanya dihitung ulang 
+    ketika products berubah. Filter produk yang inCart true, lalu hitung panjang arraynya. 
+  */}
 
   return (
     <div className="app">
       <header className="app__header">
         <div>
-          <p className="app__eyebrow">Checkpoint 2 · Product List</p>
+          <p className="app__eyebrow">Checkpoint 2 ï¿½ Product List</p>
           <h1>Studio Essentials</h1>
           <p className="app__sub">
             Toggle produk untuk menambahkannya ke cart. Tombol akan berubah saat
@@ -90,6 +101,11 @@ function App() {
           ))}
         </section>
       </main>
+       {/* 
+        Bagian main yang menampilkan daftar produk sebagai grid.
+        Untuk tiap produk dipetakan ke komponen ProductCard dengan props data produk,
+        dan fungsi toggleCart dipasangkan pada onToggle.
+      */}
     </div>
   );
 }

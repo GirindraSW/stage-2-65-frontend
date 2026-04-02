@@ -20,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     currency: "IDR",
     maximumFractionDigits: 0,
   }).format(price);
-
+  // Contohnya: 225000 akan menjadi "Rp225.000"
   return (
     <article className="product-card">
       <div className="product-card__image" style={{ backgroundImage: `url(${image})` }} />

@@ -10,10 +10,10 @@
   width: min(1100px, 100%);
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /*jarak merata di antara elemen*/
   gap: 24px;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  align-items: flex-start; /*vertikal*/
+  flex-wrap: wrap; /*penuh -> pindah baris baru*/
 }
 
 .app__eyebrow {
@@ -31,7 +31,7 @@
 }
 
 .cart-badge {
-  display: inline-flex;
+  display: inline-flex; /*flexbox inline*/
   align-items: center;
   gap: 8px;
   background: var(--chip);
