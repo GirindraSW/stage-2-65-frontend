@@ -1,111 +1,114 @@
-import { useMemo, useState } from "react"; //use memo optimasi dengen menyimpan perhitungan di antara rendering
+import { useEffect, useState } from "react";
+import { searchProducts } from "./api/productApi";
+import type { Product } from "./api/productApi";
 import ProductCard from "./components/ProductCard";
 import "./App.css";
 
-type Product = {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  inCart: boolean;
-};
-
-const initialProducts: Product[] = [
-  {
-    id: 1,
-    name: "Minimal Desk Lamp",
-    price: 225000,
-    image: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=800&auto=format&fit=crop",
-    inCart: false,
-  },
-  {
-    id: 2,
-    name: "Soft Woven Chair",
-    price: 1250000,
-    image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=800&auto=format&fit=crop",
-    inCart: false,
-  },
-  {
-    id: 3,
-    name: "Warm Ceramic Mug",
-    price: 79000,
-    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop",
-    inCart: false,
-  },
-  {
-    id: 4,
-    name: "Textured Throw Blanket",
-    price: 349000,
-    image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=800&auto=format&fit=crop",
-    inCart: false,
-  },
-];
+const DEBOUNCE_DELAY = 1000;
+const IDR_RATE = 16000;
 
 function App() {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const toggleCart = (id: number) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === id
-          ? { ...product, inCart: !product.inCart }
-          : product
-      )
-    );
-  };
-  {/* 
-    Fungsi toggleCart untuk menambah atau menghapus produk dari keranjang. 
-    Parameter id adalah id produk yang diklik.
-    Dalam setProducts, menggunakan prev state products lalu memetakan tiap produk.
-    Jika id cocok dengan produk, buat copy produk tersebut tapi invert nilai inCart.
-    Produk lain tetap sama. 
-  */}
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, DEBOUNCE_DELAY);
 
-  const cartCount = useMemo(
-    () => products.filter((product) => product.inCart).length,
-    [products]
-  );
-  {/* 
-    Menghitung jumlah produk yang ada di keranjang menggunakan useMemo agar hanya dihitung ulang 
-    ketika products berubah. Filter produk yang inCart true, lalu hitung panjang arraynya. 
-  */}
+    return () => clearTimeout(timeoutId);
+  }, [search]);
+
+  useEffect(() => {
+    if (!debouncedSearch) {
+      setProducts([]);
+      setError("");
+      setIsLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        const nextProducts = await searchProducts(debouncedSearch, controller.signal);
+        setProducts(nextProducts);
+      } catch (fetchError) {
+        if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+          return;
+        }
+
+        setProducts([]);
+        setError("API tidak bisa diakses. Coba cek koneksi internet kamu.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+
+    return () => controller.abort();
+  }, [debouncedSearch]);
 
   return (
     <div className="app">
       <header className="app__header">
         <div>
-          <p className="app__eyebrow">Checkpoint 2 � Product List</p>
-          <h1>Studio Essentials</h1>
+          <p className="app__eyebrow">Checkpoint 2 - Search Product</p>
+          <h1>Search Product</h1>
           <p className="app__sub">
-            Toggle produk untuk menambahkannya ke cart. Tombol akan berubah saat
-            sudah ditambahkan.
+            Cari produk dengan controlled input. Request API akan dijalankan setelah jeda
+            singkat agar tidak memanggil API terlalu sering.
           </p>
-        </div>
-        <div className="cart-badge">
-          <span className="cart-badge__label">Cart</span>
-          <span className="cart-badge__count">{cartCount}</span>
         </div>
       </header>
 
       <main className="app__main">
-        <section className="product-grid">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              name={product.name}
-              price={product.price}
-              image={product.image}
-              inCart={product.inCart}
-              onToggle={() => toggleCart(product.id)}
-            />
-          ))}
+        <section className="search-box">
+          <label htmlFor="search-product" className="search-box__label">
+            Nama Produk
+          </label>
+          <input
+            id="search-product"
+            type="text"
+            className="search-box__input"
+            placeholder="Ketik nama produk..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
         </section>
+
+        {isLoading && <p className="app__status">Loading produk...</p>}
+        {!isLoading && error && <p className="app__status app__status--error">{error}</p>}
+        {!isLoading && !error && debouncedSearch && products.length === 0 && (
+          <p className="app__status">Produk tidak ditemukan.</p>
+        )}
+        {!isLoading && !error && !debouncedSearch && (
+          <p className="app__status">Mulai dengan mengetik kata kunci produk.</p>
+        )}
+
+        {!isLoading && !error && products.length > 0 && (
+          <section className="product-grid">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                title={product.title}
+                brand={product.brand}
+                category={product.category}
+                description={product.description}
+                price={product.price * IDR_RATE}
+                image={product.thumbnail}
+              />
+            ))}
+          </section>
+        )}
       </main>
-       {/* 
-        Bagian main yang menampilkan daftar produk sebagai grid.
-        Untuk tiap produk dipetakan ke komponen ProductCard dengan props data produk,
-        dan fungsi toggleCart dipasangkan pada onToggle.
-      */}
     </div>
   );
 }

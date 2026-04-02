@@ -1,19 +1,21 @@
 import React from "react";
 
 interface ProductCardProps {
-  name: string;
+  title: string;
+  brand: string;
+  category: string;
+  description: string;
   price: number;
   image: string;
-  inCart: boolean;
-  onToggle: () => void;
 }
-
+// React FUnction Component
 const ProductCard: React.FC<ProductCardProps> = ({
-  name,
+  title,
+  brand,
+  category,
+  description,
   price,
   image,
-  inCart,
-  onToggle,
 }) => {
   const formattedPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -25,15 +27,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <article className="product-card">
       <div className="product-card__image" style={{ backgroundImage: `url(${image})` }} />
       <div className="product-card__body">
-        <h2>{name}</h2>
+        <p className="product-card__tag">{category}</p>
+        <h2>{title}</h2>
+        <p className="product-card__brand">{brand}</p>
+        <p className="product-card__desc">{description}</p>
         <p className="product-card__price">{formattedPrice}</p>
-        <button
-          type="button"
-          className={`product-card__button ${inCart ? "is-added" : ""}`}
-          onClick={onToggle}
-        >
-          {inCart ? "Added" : "Add to Cart"}
-        </button>
       </div>
     </article>
   );
