@@ -8,8 +8,7 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
-    // shadCN ui
-    "baseUrl": ".",
+    /* shadCN ui */
     "paths": {
       "@/*": [
         "./src/*"
