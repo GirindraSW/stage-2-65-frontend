@@ -1,7 +1,7 @@
 ﻿import { useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 
-// Hook ini memudahkan akses AuthContext sekaligus memberi guard saat provider belum dipasang.
+// Hook
 export function useAuth() {
   const context = useContext(AuthContext);
 

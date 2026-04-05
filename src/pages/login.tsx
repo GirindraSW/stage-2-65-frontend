@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 
-// autentikasi sederhana dan menyimpan token ke context/localStorage.
+// Halaman login untuk simulasi autentikasi. Gunakan admin/admin untuk masuk.
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -13,23 +13,23 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // memvalidasi username/password lalu menyimpan token jika valid.
+  // Fungsi ini memvalidasi credential dan menyimpan token jika berhasil login.
   const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (username === "admin" && password === "admin") {
-      login("token_admin_demo");
-      navigate("/dashboard");
+      login("token_movie_list");
+      navigate("/favorites");
       return;
     }
 
-    setErrorMessage("Username atau password salah. Gunakan admin/admin.");
+    setErrorMessage("Username/password salah. Coba admin/admin.");
   };
 
   return (
     <section className="mx-auto w-full max-w-md rounded-xl border bg-card p-6 shadow-sm">
       <h2 className="text-2xl font-semibold">Login</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Masuk dulu untuk lanjut.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Login untuk membuka halaman favorites.</p>
 
       <form className="mt-5 space-y-4" onSubmit={handleLogin}>
         <div className="space-y-2">

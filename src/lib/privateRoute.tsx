@@ -2,7 +2,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
-// Melindungi route tertentu. Jika belum login, user diarahkan ke halaman login.
+// Melindungi route
 export default function PrivateRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth();
 

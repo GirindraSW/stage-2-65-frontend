@@ -6,9 +6,9 @@ export default function NotFound() {
   return (
     <section className="space-y-4 rounded-xl border bg-card p-6">
       <h2 className="text-2xl font-semibold">404 - Halaman tidak ditemukan</h2>
-      <p className="text-sm text-muted-foreground">Halaman yang kamu cari tidak ada.</p>
+      <p className="text-sm text-muted-foreground">URL tidak tersedia di Movie List.</p>
       <Button asChild variant="outline">
-        <Link to="/">Kembali ke Home</Link>
+        <Link to="/">Kembali ke Movies</Link>
       </Button>
     </section>
   );

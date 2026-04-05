@@ -3,40 +3,29 @@ import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { AuthProvider } from "@/context/AuthProvider";
 import { useAuth } from "@/hooks/useAuth";
+import { useFavorites } from "@/hooks/useFavorites";
 import PrivateRoute from "@/lib/privateRoute";
-import About from "@/pages/About";
-import Cart from "@/pages/Cart";
-import Dashboard from "@/pages/Dashboard";
-import Home from "@/pages/Home";
+import Favorites from "@/pages/Favorites";
 import Login from "@/pages/login";
+import Movies from "@/pages/Movies";
 import NotFound from "@/pages/NotFound";
-import ProductDetail from "@/pages/ProductDetail";
-import Products from "@/pages/Products";
 
-// navigasi global, tombol login/logout, toggle tema.
+// Header berisi navigasi utama, indikator jumlah favorit, serta tombol login/logout.
 function Header() {
   const { isAuthenticated, logout } = useAuth();
+  const { favoriteCount } = useFavorites();
 
   return (
-    <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 md:px-6">
-        <h1 className="text-lg font-semibold">Product Catalog App</h1>
+        <h1 className="text-lg font-semibold">Movie List</h1>
 
         <nav className="flex flex-wrap items-center gap-2">
           <Button asChild variant="outline" size="sm">
-            <NavLink to="/">Home</NavLink>
+            <NavLink to="/">Movies</NavLink>
           </Button>
           <Button asChild variant="outline" size="sm">
-            <NavLink to="/products">Products</NavLink>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <NavLink to="/cart">Cart</NavLink>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <NavLink to="/about">About</NavLink>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <NavLink to="/dashboard">Dashboard</NavLink>
+            <NavLink to="/favorites">Favorites ({favoriteCount})</NavLink>
           </Button>
         </nav>
 
@@ -57,28 +46,23 @@ function Header() {
   );
 }
 
-// main route and active route
+// Layout ini memuat route utama Movie List.
 function AppLayout() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
       <Header />
       <main className="mx-auto w-full max-w-6xl px-4 py-8 md:px-6">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          {/* Dynamic route: param `productId` digunakan untuk menentukan detail produk yang ditampilkan */}
-          <Route path="/products/:productId" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Movies />} />
           <Route
-            path="/dashboard"
+            path="/favorites"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <Favorites />
               </PrivateRoute>
             }
           />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -86,7 +70,7 @@ function AppLayout() {
   );
 }
 
-// AuthProvider + BrowserRouter
+// App membungkus routing dengan AuthProvider agar status login bisa dipakai lintas halaman.
 export default function App() {
   return (
     <AuthProvider>
