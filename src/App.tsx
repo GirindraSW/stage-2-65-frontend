@@ -1,82 +1,56 @@
-﻿import { BrowserRouter, Link, NavLink, Route, Routes } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+﻿import CartPanel from "@/components/cart/CartPanel";
+import ProductGrid from "@/components/cart/ProductGrid";
 import ThemeToggle from "@/components/ui/ThemeToggle";
-import { AuthProvider } from "@/context/AuthProvider";
-import { useAuth } from "@/hooks/useAuth";
-import { useFavorites } from "@/hooks/useFavorites";
-import PrivateRoute from "@/lib/privateRoute";
-import Favorites from "@/pages/Favorites";
-import Login from "@/pages/login";
-import Movies from "@/pages/Movies";
-import NotFound from "@/pages/NotFound";
+import { CartProvider } from "@/context/CartProvider";
+import { useCart } from "@/hooks/useCart";
 
-// Header berisi navigasi utama, indikator jumlah favorit, serta tombol login/logout.
-function Header() {
-  const { isAuthenticated, logout } = useAuth();
-  const { favoriteCount } = useFavorites();
+// Layout halaman cart management dengan dua area: produk dan cart.
+function CartManagementLayout() {
+  const { isLoadingInitial, initialError } = useCart();
+
+  if (isLoadingInitial) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
+        <p className="text-sm text-muted-foreground">Memuat data cart...</p>
+      </div>
+    );
+  }
+
+  if (initialError) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-gradient-to-b from-slate-50 to-slate-100 px-4 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
+        <p className="max-w-xl text-center text-sm text-destructive">{initialError}</p>
+      </div>
+    );
+  }
 
   return (
-    <header className="sticky top-0 z-20 border-b bg-background/85 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 md:px-6">
-        <h1 className="text-lg font-semibold">Movie List</h1>
-
-        <nav className="flex flex-wrap items-center gap-2">
-          <Button asChild variant="outline" size="sm">
-            <NavLink to="/">Movies</NavLink>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <NavLink to="/favorites">Favorites ({favoriteCount})</NavLink>
-          </Button>
-        </nav>
-
-        <div className="flex items-center gap-2">
-          {isAuthenticated ? (
-            <Button onClick={logout} variant="destructive" size="sm">
-              Logout
-            </Button>
-          ) : (
-            <Button asChild size="sm">
-              <Link to="/login">Login</Link>
-            </Button>
-          )}
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 px-4 py-8 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100 sm:px-6">
+      <div className="mx-auto w-full max-w-6xl space-y-5">
+        <header className="flex items-center justify-between rounded-xl border bg-card px-4 py-3 shadow-sm">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Checkpoint 2
+            </p>
+            <h1 className="text-2xl font-semibold tracking-tight">Cart Management App</h1>
+          </div>
           <ThemeToggle />
+        </header>
+
+        <div className="grid gap-6 xl:grid-cols-[1.7fr_1fr]">
+          <ProductGrid />
+          <CartPanel />
         </div>
       </div>
-    </header>
-  );
-}
-
-// Layout ini memuat route utama Movie List.
-function AppLayout() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
-      <Header />
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 md:px-6">
-        <Routes>
-          <Route path="/" element={<Movies />} />
-          <Route
-            path="/favorites"
-            element={
-              <PrivateRoute>
-                <Favorites />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
     </div>
   );
 }
 
-// App membungkus routing dengan AuthProvider agar status login bisa dipakai lintas halaman.
+// App dibungkus CartProvider agar state cart bisa dipakai global oleh semua komponen.
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppLayout />
-      </BrowserRouter>
-    </AuthProvider>
+    <CartProvider>
+      <CartManagementLayout />
+    </CartProvider>
   );
 }

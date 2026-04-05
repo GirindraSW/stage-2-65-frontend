@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server:dev": "npm --prefix backend run dev",
+    "server:migrate": "npm --prefix backend run prisma:migrate",
+    "server:seed": "npm --prefix backend run prisma:seed"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.8",
